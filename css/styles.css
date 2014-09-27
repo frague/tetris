@@ -18,3 +18,7 @@
     width: 20px;
     height: 20px;
 }
+
+.brick {
+    background-color: red;
+}
