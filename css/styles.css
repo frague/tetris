@@ -15,10 +15,27 @@
 #pit td {
     border: solid 1px #AAA;
     border-width: 1px 0 0 1px;
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
+    font-size: 7px;
 }
 
 .brick {
-    background-color: red;
+    background-color: #64432b;
+}
+
+.red {
+    background-color: #e8692a;
+}
+.green {
+    background-color: #7a9f35;
+}
+.blue {
+    background-color: #326fae;
+}
+.cyan {
+    background-color: #20ae99;
+}
+.magenta {
+    background-color: #b23693;
 }

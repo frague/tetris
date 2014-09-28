@@ -1,17 +1,16 @@
 /** @jsx React.DOM */
 
 var Cell = React.createClass({
-    getInitialState: function() {
-        return {
-            state: this.props.data.state
-        }
-    },
     render: function() {
-        this.props.data.view = this;
         var cx = React.addons.classSet;
         var classes = cx({
             'cell': true,
-            'brick': this.state.state
+            'brick': this.props.state == 1,
+            'green': this.props.state == 'g',
+            'red': this.props.state == 'r',
+            'blue': this.props.state == 'b',
+            'cyan': this.props.state == 'c',
+            'magenta': this.props.state == 'm'
         });
         return (
             <td className={classes}>&nbsp;</td>
@@ -21,10 +20,11 @@ var Cell = React.createClass({
 
 var Line = React.createClass({
     render: function() {
+        if (this.props.hidden) return null;
         return (
             <tr>
-                {this.props.data.map(function(c) {
-                    return c.view
+                {this.props.data.split('').map(function(c) {
+                    return <Cell state={c} />
                 })}
             </tr>
         )
@@ -32,11 +32,16 @@ var Line = React.createClass({
 });
 
 var Pit = React.createClass({
+    getInitialState: function() {
+        return {
+            data: this.props.data
+        }
+    },
     render: function() {
         return (
             <table>
-                {this.props.data.map(function(l) {
-                    return <Line data={l} />
+                {this.state.data.map(function(l, index) {
+                    return <Line data={l} hidden={index < 2} />
                 })}
             </table>
         );
@@ -45,7 +50,7 @@ var Pit = React.createClass({
 
 var render = function(data) {
     React.renderComponent(
-        <Pit data={data} />,
+        <Pit data={tetris.data} />,
         document.getElementById('pit')
     );
 }

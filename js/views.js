@@ -1,17 +1,16 @@
 /** @jsx React.DOM */
 
 var Cell = React.createClass({displayName: 'Cell',
-    getInitialState: function() {
-        return {
-            state: this.props.data.state
-        }
-    },
     render: function() {
-        this.props.data.view = this;
         var cx = React.addons.classSet;
         var classes = cx({
             'cell': true,
-            'brick': this.state.state
+            'brick': this.props.state == 1,
+            'green': this.props.state == 'g',
+            'red': this.props.state == 'r',
+            'blue': this.props.state == 'b',
+            'cyan': this.props.state == 'c',
+            'magenta': this.props.state == 'm'
         });
         return (
             React.DOM.td({className: classes}, " ")
@@ -21,10 +20,11 @@ var Cell = React.createClass({displayName: 'Cell',
 
 var Line = React.createClass({displayName: 'Line',
     render: function() {
+        if (this.props.hidden) return null;
         return (
             React.DOM.tr(null, 
-                this.props.data.map(function(c) {
-                    return c.view
+                this.props.data.split('').map(function(c) {
+                    return Cell({state: c})
                 })
             )
         )
@@ -32,11 +32,16 @@ var Line = React.createClass({displayName: 'Line',
 });
 
 var Pit = React.createClass({displayName: 'Pit',
+    getInitialState: function() {
+        return {
+            data: this.props.data
+        }
+    },
     render: function() {
         return (
             React.DOM.table(null, 
-                this.props.data.map(function(l) {
-                    return Line({data: l})
+                this.state.data.map(function(l, index) {
+                    return Line({data: l, hidden: index < 2})
                 })
             )
         );
@@ -45,7 +50,7 @@ var Pit = React.createClass({displayName: 'Pit',
 
 var render = function(data) {
     React.renderComponent(
-        Pit({data: data}),
+        Pit({data: tetris.data}),
         document.getElementById('pit')
     );
 }
