@@ -47,11 +47,27 @@ var Pit = React.createClass({
             </table>
         );
     }
-})
+});
 
-var render = function(data) {
+var Score = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <h2>Score: {this.props.score}</h2>
+            </div>
+        )
+    }
+});
+
+var render = function(tetris) {
     React.renderComponent(
         <Pit data={tetris.data} />,
         document.getElementById('pit')
     );
+    
+    React.renderComponent(
+        <Score score={tetris.score} />,
+        document.getElementById('score')
+    );
+    console.log(tetris.score);
 }

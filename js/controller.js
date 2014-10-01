@@ -20,13 +20,18 @@ function checkKey(e) {
     else if (e.keyCode == 39) dx = 1;
     else if (e.keyCode == 38) r = 1;
     else if (e.keyCode == 40) r = -1;
+    else if (e.keyCode == 32 && !tetris.drop) {
+        tetris.drop = setInterval(tickHandler, 1);
+    }
+    
     if (dx && tetris.move(dx)) render(tetris);
+    
     if (r) {
-        var o = tetris.figures[0].rotate(r > 0);
+        var f = tetris.figures[0], o = f.rotate(r > 0);
         if (tetris.move(0)) render(tetris);
         else {
-            tetris.figures[0].data = o;
-            tetris.figures[0].calc(this);
+            f.data = o;
+            f.calc(this);
         }
     }
 }

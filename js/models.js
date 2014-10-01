@@ -1,6 +1,7 @@
 var game = function(pit) {
     this.level = 1;
     this.score = 0;
+    this.complexity = 500;
     
     this.is_over = false;
     this.data = [];
@@ -37,6 +38,7 @@ game.prototype.fixFigure = function() {
             this.data.splice(l, 1);
             this.data.unshift(this.empty_line);
             l++;
+            this.score += 100;
         }
 };
 
@@ -56,6 +58,8 @@ game.prototype.move = function(dx) {
 };
 
 game.prototype.tick = function() {
+    if (this.drop) this.score += 10;
+    
     this.repaintFigure('0');
     
     var f = this.figures[0];
@@ -86,7 +90,11 @@ game.prototype.tick = function() {
         this.fixFigure();
         this.figures.splice(0, 1);
         this.figures.push(new figure(this.pit.cols));
-        if (this.drop) clearInterval(this.drop);
+        if (this.drop) {
+            clearInterval(this.drop);
+            delete this.drop;
+        }
+        this.score += 10;
     } else {
         f.y++;
     }
@@ -123,6 +131,8 @@ figure.prototype.calc = function(g) {
 };
     
 figure.prototype.merge = function(g) {
+    if (this.y + this.height > g.pit.lines) return true;
+    
     var result = false;
     for (var l = this.height - 1; l >= 0; l--) 
         for (var c = 0, line = g.data[l + this.y + 1]; c < this.width; c++)
@@ -135,11 +145,6 @@ figure.prototype.merge = function(g) {
 
 figure.prototype.rotate = function(cw) {
     var d = Array(this.width), old = this.data;
-    /*for (var i = 0; i < this.height; i++) {
-        for (var j = 0; j < this.width; j++)
-            d[j] = (d[j] ? d[j] : '') + this.data[cw ? this.height - i  - 1 : i].charAt(cw ? j : this.width - j - 1);
-    }
-    this.data = d;*/
     this.data = this.data[0].split('').map(function(o, i) {
         return this.reduce(function(p, c) {
             return cw ? c.charAt(i) + p : p + c.substr(-i-1, 1);
@@ -149,10 +154,4 @@ figure.prototype.rotate = function(cw) {
     this.calc();
     if (this.x + this.width > this.pit_width) this.x = this.pit_width - this.width;
     return old;
-};
-
-var level = function(num, complexity, callback) {
-    this.number = num;
-    this.complexity = complexity;
-    this.callback = callback;
 };

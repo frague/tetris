@@ -2,6 +2,10 @@
     font-family: tahoma, arial, serif;
 }
 
+#pit, #score {
+    float: left;
+}
+
 #pit table {
     border: solid 3px #888;
     border-top-width: 0;
