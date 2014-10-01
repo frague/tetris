@@ -1,8 +1,12 @@
 var game = function(pit) {
+    this.level = 1;
+    this.score = 0;
+    
     this.is_over = false;
     this.data = [];
     this.pit = pit;
     this.pit.lines += 2;
+    this.drop = null;
     
     this.figures = [
         new figure(this.pit.cols),
@@ -56,20 +60,25 @@ game.prototype.tick = function() {
     
     var f = this.figures[0];
     if (f.merge(this) && !f.y) {
-        console.log(f);
         this.over();
         return;
     };
     
+    // Check if figure reached the bottom
     var collided = f.y + f.height >= this.pit.lines;
+    
+    // If not, check if 
     if (!collided) {
         for (var l = this.pit.lines - 1, prev = this.full_line; l >= 0; l--) {
             var li = this.data[l];
             if (li.indexOf(f.color) >= 0)
                 for (var c = 0; c < this.pit.cols; c++)
-                    if (li.charAt(c) == f.color && prev.charAt(c) == '1')
+                    if (li.charAt(c) == f.color && prev.charAt(c) == '1') {
                         collided = true;
+                        break;
+                    }
             prev = li;
+            if (collided) break;
         }
     }
 
@@ -77,6 +86,7 @@ game.prototype.tick = function() {
         this.fixFigure();
         this.figures.splice(0, 1);
         this.figures.push(new figure(this.pit.cols));
+        if (this.drop) clearInterval(this.drop);
     } else {
         f.y++;
     }
@@ -114,28 +124,35 @@ figure.prototype.calc = function(g) {
     
 figure.prototype.merge = function(g) {
     var result = false;
-    try {
-        for (var l = this.height - 1; l >= 0; l--) 
-            for (var c = 0, line = g.data[l + this.y + 1]; c < this.width; c++)
-                if (this.data[l].charAt(c) != '0') {
-                    if (g.data[this.y + l].charAt(this.x + c) != '0') result = true;
-                    else g.setState(this.y + l, this.x + c, this.color);
-                }
-    } catch(e) {
-        console.log(e, this.data, l, c);    
-    }
+    for (var l = this.height - 1; l >= 0; l--) 
+        for (var c = 0, line = g.data[l + this.y + 1]; c < this.width; c++)
+            if (this.data[l].charAt(c) != '0') {
+                if (g.data[this.y + l].charAt(this.x + c) != '0') result = true;
+                else g.setState(this.y + l, this.x + c, this.color);
+            }
     return result;
 };
 
 figure.prototype.rotate = function(cw) {
     var d = Array(this.width), old = this.data;
-    for (var i = 0; i < this.height; i++) {
+    /*for (var i = 0; i < this.height; i++) {
         for (var j = 0; j < this.width; j++)
             d[j] = (d[j] ? d[j] : '') + this.data[cw ? this.height - i  - 1 : i].charAt(cw ? j : this.width - j - 1);
     }
-    this.data = d;
+    this.data = d;*/
+    this.data = this.data[0].split('').map(function(o, i) {
+        return this.reduce(function(p, c) {
+            return cw ? c.charAt(i) + p : p + c.substr(-i-1, 1);
+        }, '');
+    }, this.data);
+    
     this.calc();
     if (this.x + this.width > this.pit_width) this.x = this.pit_width - this.width;
     return old;
 };
 
+var level = function(num, complexity, callback) {
+    this.number = num;
+    this.complexity = complexity;
+    this.callback = callback;
+};
