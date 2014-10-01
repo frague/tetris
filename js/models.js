@@ -55,7 +55,8 @@ game.prototype.tick = function() {
     this.repaintFigure('0');
     
     var f = this.figures[0];
-    if (f.merge(this)) {
+    if (f.merge(this) && !f.y) {
+        console.log(f);
         this.over();
         return;
     };
@@ -113,12 +114,16 @@ figure.prototype.calc = function(g) {
     
 figure.prototype.merge = function(g) {
     var result = false;
-    for (var l = this.height - 1; l >= 0; l--) 
-        for (var c = 0, line = g.data[l + this.y + 1]; c < this.width; c++)
-            if (this.data[l].charAt(c) != '0') {
-                if (g.data[this.y + l].charAt(this.x + c) != '0') result = true;
-                else g.setState(this.y + l, this.x + c, this.color);
-            }
+    try {
+        for (var l = this.height - 1; l >= 0; l--) 
+            for (var c = 0, line = g.data[l + this.y + 1]; c < this.width; c++)
+                if (this.data[l].charAt(c) != '0') {
+                    if (g.data[this.y + l].charAt(this.x + c) != '0') result = true;
+                    else g.setState(this.y + l, this.x + c, this.color);
+                }
+    } catch(e) {
+        console.log(e, this.data, l, c);    
+    }
     return result;
 };
 

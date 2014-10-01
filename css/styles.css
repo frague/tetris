@@ -20,6 +20,10 @@
     font-size: 7px;
 }
 
+.figure {
+    box-shadow: 2px 2px 4px;
+}
+
 .brick {
     background-color: #64432b;
 }
