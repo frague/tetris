@@ -14,7 +14,7 @@ var tickHandler = function() {
 
 function checkKey(e) {
     if (tetris.is_over) return;
-    
+
     var e = e || window.event, dx, r;
     if (e.keyCode == 37) dx = -1;
     else if (e.keyCode == 39) dx = 1;
@@ -24,12 +24,15 @@ function checkKey(e) {
     if (r) {
         var o = tetris.figures[0].rotate(r > 0);
         if (tetris.move(0)) render(tetris);
-        else tetris.figures[0].data = o;
+        else {
+            tetris.figures[0].data = o;
+            tetris.figures[0].calc(this);
+        }
     }
 }
 
-var f = function() {
+(function() {
     render(tetris);
     ticker = window.setInterval(tickHandler, complexity);
     document.onkeydown = checkKey;
-}();
+})();

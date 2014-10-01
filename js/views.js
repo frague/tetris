@@ -5,6 +5,7 @@ var Cell = React.createClass({displayName: 'Cell',
         var cx = React.addons.classSet;
         var classes = cx({
             'cell': true,
+            'figure': this.props.state != 0,
             'brick': this.props.state == 1,
             'green': this.props.state == 'g',
             'red': this.props.state == 'r',
