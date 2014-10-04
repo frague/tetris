@@ -1,11 +1,14 @@
 var pit = {
     lines: 20,
-    cols: 20
+    cols: 10
 };
 
-var complexity = 500, ticker;
+function over() {
+    document.getElementById('game_over').className = '';
+};
 
-var tetris = new game(pit);
+
+var tetris = new game(pit, over);
 
 var tickHandler = function() {
     tetris.tick();
@@ -34,10 +37,11 @@ function checkKey(e) {
             f.calc(this);
         }
     }
-}
+};
 
 (function() {
     render(tetris);
-    ticker = window.setInterval(tickHandler, complexity);
+    //tetris.ticker = window.setInterval(tickHandler, tetris.speed);
     document.onkeydown = checkKey;
+    tetris.speedUp();
 })();

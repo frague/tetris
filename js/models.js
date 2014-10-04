@@ -1,9 +1,14 @@
-var game = function(pit) {
-    this.level = 1;
+var game = function(pit, over) {
+    this.lines = 0;
     this.score = 0;
-    this.complexity = 500;
+    this.speed = 0;
+    this.speed_update = 0;
+    
+    this.ticker = null;
     
     this.is_over = false;
+    this.over_callback = over;
+    
     this.data = [];
     this.pit = pit;
     this.pit.lines += 2;
@@ -31,15 +36,29 @@ game.prototype.repaintFigure = function(color) {
     }
 };
 
+game.prototype.speedUp = function() {
+    this.speed_update++;
+    this.speed++;
+
+    clearInterval(this.ticker);
+    this.ticker = window.setInterval(
+        tickHandler, 500 - 10 * this.speed);
+};
+    
 game.prototype.fixFigure = function() {
     this.repaintFigure('1');
+    var filled = 0;
     for (l = this.pit.lines - 1; l >= 0; l--) 
         if (this.data[l] == this.full_line) {
             this.data.splice(l, 1);
             this.data.unshift(this.empty_line);
             l++;
-            this.score += 100;
+            filled++;
+            this.lines++;
         }
+    this.score += [0, 100, 300, 700, 1500][filled];
+    if (Math.floor(this.lines / 10) >= this.speed_update)
+        this.speedUp();
 };
 
 game.prototype.move = function(dx) {
@@ -90,19 +109,25 @@ game.prototype.tick = function() {
         this.fixFigure();
         this.figures.splice(0, 1);
         this.figures.push(new figure(this.pit.cols));
-        if (this.drop) {
-            clearInterval(this.drop);
-            delete this.drop;
-        }
         this.score += 10;
+        this.dropped();
     } else {
         f.y++;
     }
 };
 
+game.prototype.dropped = function() {
+    if (this.drop) {
+        clearInterval(this.drop);
+        this.drop = null;
+    }
+};
+
 game.prototype.over = function() {
     this.is_over = true;
-    clearInterval(ticker);
+    clearInterval(this.ticker);
+    this.dropped();
+    this.over_callback();
 };
 
 var figures = [
@@ -111,7 +136,8 @@ var figures = [
     ['02', '02', '22'],
     ['2', '2', '2', '2'],
     ['022', '220'],
-    ['220', '022']
+    ['220', '022'],
+    ['22', '22']
 ];
 
 var colors = 'rgbcm';

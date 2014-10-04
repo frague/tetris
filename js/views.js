@@ -22,29 +22,39 @@ var Cell = React.createClass({displayName: 'Cell',
 var Line = React.createClass({displayName: 'Line',
     render: function() {
         if (this.props.hidden) return null;
+        if (this.props.state) 
+            console.log(this.props.data, this.props.state);
         return (
             React.DOM.tr(null, 
                 this.props.data.split('').map(function(c) {
-                    return Cell({state: c})
-                })
+                    var state = this.state ? (c != 0 ? this.state : 0) : c;
+                    return Cell({state: state})
+                }, this.props)
             )
         )
     }
 });
 
 var Pit = React.createClass({displayName: 'Pit',
-    getInitialState: function() {
-        return {
-            data: this.props.data
-        }
-    },
     render: function() {
         return (
-            React.DOM.table(null, 
-                this.state.data.map(function(l, index) {
+            React.DOM.table(null, React.DOM.tbody(null, 
+                this.props.data.map(function(l, index) {
                     return Line({data: l, hidden: index < 2})
                 })
-            )
+            ))
+        );
+    }
+});
+
+var Fig = React.createClass({displayName: 'Fig',
+    render: function() {
+        return (
+            React.DOM.table(null, React.DOM.tbody(null, 
+                this.props.data.map(function(l) {
+                    return Line({data: l, state: this.props.color, hidden: false})
+                }, this)
+            ))
         );
     }
 });
@@ -53,7 +63,9 @@ var Score = React.createClass({displayName: 'Score',
     render: function() {
         return (
             React.DOM.div(null, 
-                React.DOM.h2(null, "Score: ", this.props.score)
+                React.DOM.h2(null, "Score: ", React.DOM.strong(null, this.props.score)), 
+                React.DOM.h2(null, "Lines: ", React.DOM.strong(null, this.props.lines)), 
+                React.DOM.h2(null, "Speed: ", React.DOM.strong(null, this.props.speed))
             )
         )
     }
@@ -65,9 +77,14 @@ var render = function(tetris) {
         document.getElementById('pit')
     );
     
+    var f1 = tetris.figures[1];
     React.renderComponent(
-        Score({score: tetris.score}),
-        document.getElementById('score')
+        Fig({data: f1.data, color: f1.color}),
+        document.getElementById('next')
     );
-    console.log(tetris.score);
+        
+    React.renderComponent(
+        Score({score: tetris.score, lines: tetris.lines, speed: tetris.speed}),
+        document.getElementById('scores')
+    );
 }

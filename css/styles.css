@@ -1,5 +1,48 @@
+
+@import url(http://fonts.googleapis.com/css?family=Exo+2:400,100,200,700,900&subset=latin,cyrillic);
+
 * {
-    font-family: tahoma, arial, serif;
+    font-family: 'Exo 2', tahoma, arial, serif;
+}
+
+body {
+    background-color: #262524;
+}
+
+h1 {
+    font-size: 50px;
+    padding-left: 36px;
+    color: #c90d6b;
+}
+
+h2 {
+    color: #dfe548;
+    font-weight: 400;
+}
+
+h2 strong {
+    color: #e09620;
+    padding-left: 10px;
+}
+
+#score {
+    margin-left: 30px;
+}
+
+#next {
+    text-align: center;
+    height: 150px;
+}
+
+#next table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+#next table tr td {
+    width: 16px;
+    height: 16px;
+    font-size: 7px;
 }
 
 #pit, #score {
@@ -7,7 +50,8 @@
 }
 
 #pit table {
-    border: solid 3px #888;
+    border: solid 10px #c37b28;
+    background-color: #070707;
     border-top-width: 0;
     border-collapse: collapse;
 }
@@ -17,15 +61,32 @@
 }
 
 #pit td {
-    border: solid 1px #AAA;
+    border: solid 1px #363636;
     border-width: 1px 0 0 1px;
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 20px;
     font-size: 7px;
 }
 
+#game_over {
+    font-size: 50px;
+    color: #FFF;
+    background-color: #F00;
+    text-align: center;
+    padding: 20px;
+    margin: 0 50px;
+    position: absolute;
+    top: 260px;
+    border-radius: 10px;
+    box-shadow: 4px 4px 10px 0 #000;
+}
+
+.hidden {
+    display: none;
+}
+
 .figure {
-    box-shadow: 2px 2px 4px;
+    box-shadow: 4px 2px 2px 0 #796436;
 }
 
 .brick {
