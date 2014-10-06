@@ -42,7 +42,7 @@ game.prototype.speedUp = function() {
 
     clearInterval(this.ticker);
     this.ticker = window.setInterval(
-        tickHandler, 500 - 10 * this.speed);
+        tickHandler, 500 - 50 * (this.speed - 1));
 };
     
 game.prototype.fixFigure = function() {
